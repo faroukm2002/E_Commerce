@@ -11,6 +11,8 @@ import { Apifeatures } from "../../utils/Apifeatures.js";
 
 const addCategory= catchError(async(req,res,next)=>{
   req.body.slug=slugify(req.body.name)
+  req.body.image=req.file.filename
+
 const category= new categoryModle(req.body)
 await category.save()
 // created

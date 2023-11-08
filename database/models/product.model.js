@@ -82,7 +82,10 @@ min:0,
 },
 { timestamps: true } 
 )
-
+productSchema.post("init", (doc) => {
+    doc.imgCover = process.env.BASE_URL + "product/" + doc.imgCover;
+    if (doc.images) doc.images = doc.images.map((path) => process.env.BASE_URL + "product/" + path);
+  }); 
 
 
 export const productModel=model('product',productSchema)

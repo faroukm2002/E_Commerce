@@ -21,6 +21,8 @@ const categorySchema=new Schema({
     { timestamps: true } 
 )
 
-
+categorySchema.post('init',function(doc){
+    doc.image=process.env.BASE_URL +" /category/" + doc.image
+})
 export const categoryModle=model('category',categorySchema)
 

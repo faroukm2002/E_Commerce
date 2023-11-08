@@ -3,6 +3,7 @@ import express  from "express"
 import subCategoryRouter from "../subcategory/subcategory.routes.js"
 import { validate } from "../../middleware/validate.js"
 import { addCategoryValidation, deleteCategoryValidation, updateCategoryValidation } from "./category.validation.js"
+import { uploadSingleFile } from "../../multer/multer.js"
 const categoryRouter =express.Router()
 
 // categoryRouter.post('/', category.addCategory)
@@ -14,7 +15,7 @@ const categoryRouter =express.Router()
 
 categoryRouter.use('/:categoryId/subcategories',subCategoryRouter)
 categoryRouter.route('/').
-post(validate(addCategoryValidation) ,category.addCategory).
+post(uploadSingleFile('image','category'),validate(addCategoryValidation) ,category.addCategory).
 get(category.getAllCategory)
 
 
@@ -27,3 +28,4 @@ delete(validate(deleteCategoryValidation),category.deleteCategory)
 export default categoryRouter
 
 
+ 

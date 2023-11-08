@@ -1,12 +1,16 @@
 import express  from "express"
     import  * as product  from "./product.controller.js"
+import { uploadMixFiles } from "../../multer/multer.js"
 const productRouter =express.Router()
 
 
 
-
 productRouter.route('/').
-post(product.addproduct).
+
+post(uploadMixFiles([
+    { name: 'imgCover', maxCount: 1 },
+    { name: 'images', maxCount: 20 }
+  ],'product') ,product.addproduct).
 get(product.getAllproduct)
 
 

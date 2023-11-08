@@ -11,6 +11,9 @@ import { Apifeatures } from "../../utils/Apifeatures.js";
 
 const addproduct= catchError(async(req,res,next)=>{
   req.body.slug=slugify(req.body.title)
+  req.body.imgCover=req.files.imgCover[0].filename
+  req.body.images = req.files.images.map(ele => ele.filename);
+
 const product= new productModel(req.body)
 await product.save()
 
