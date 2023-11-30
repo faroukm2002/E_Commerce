@@ -42,7 +42,7 @@ const getAllproduct = catchError(async (req, res, next) => {
   // let page = req.query.page * 1 || 1;
   // if (req.query.page <= 0) page = 1;
   // let skip = (page - 1) * page_limit;
-
+                                                      
 
   // **********************************
 
