@@ -67,9 +67,11 @@ const updateUser= catchError(async(req,res,next)=>{
 
   const changeUserPassword= catchError(async(req,res,next)=>{
     const{id}=req.params
+    req.body.changePasswordAt = Date.now();
+  console.log(req.body.changePasswordAt);
     const User= await userModel.findByIdAndUpdate(
       id,
-       {password:req.body.password},
+       req.body,
       {new:true})
     // created
   
@@ -81,6 +83,9 @@ const updateUser= catchError(async(req,res,next)=>{
   
     }  )
 
+
+    
+  
 
   const deleteUser= deleteOne(userModel,'User')
 

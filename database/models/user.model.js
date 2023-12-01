@@ -13,7 +13,6 @@ const userSchema=new Schema({
         required:true,
         trim:true,
     },
-
     password:{
         type:String,
         required:true,
@@ -23,6 +22,7 @@ const userSchema=new Schema({
             enum:['admin','user'],
             default:'user'
         },
+        changePasswordAt:Date,
         isActive:{
             type:Boolean,
             default:true,
