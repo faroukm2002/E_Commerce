@@ -80,12 +80,20 @@ min:0,
     },
 
 },
-{ timestamps: true } 
+{ timestamps: true,toJSON: { virtuals: true },toObject: { virtuals: true } } 
 )
 productSchema.post("init", (doc) => {
     doc.imgCover = process.env.BASE_URL + "product/" + doc.imgCover;
     if (doc.images) doc.images = doc.images.map((path) => process.env.BASE_URL + "product/" + path);
   }); 
+  productSchema.virtual('myReviews', {
+    ref: 'review',
+    localField: '_id',
+    foreignField: 'product',
+  });
+  productSchema.pre(/^find/,function(){
+    this.populate('myReviews') 
+ })
 
 
 export const productModel=model('product',productSchema)

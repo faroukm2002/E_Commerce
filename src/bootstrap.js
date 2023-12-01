@@ -7,6 +7,7 @@ import subCategoryRouter from "./modules/subcategory/subcategory.routes.js"
 import userRouter from "./modules/user/user.routes.js"
 
 import { AppError } from "./utils/AppError.js"
+import reviewRouter from "./modules/review/review.routes.js"
 
 
 export function bootstrap(app){
@@ -19,6 +20,7 @@ export function bootstrap(app){
 
     app.use('/api/v1/users',userRouter)
     app.use('/api/v1/auth',authRouter)
+    app.use('/api/v1/review',reviewRouter)
 
 
 

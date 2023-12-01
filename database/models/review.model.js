@@ -1,7 +1,7 @@
 
 import { Schema,Types,model } from "mongoose"
 const reviewSchema=new Schema({
-    text:{
+    comment:{
         type:String,
         required:true,
         trim:true,
@@ -19,13 +19,17 @@ user:{
     required:true,
 
 },
-rate:{
+ratings:{
     type:Number,
-    enum:[1,2,3,4,5]
+    min:1,
+    max:5,
+    // enum:[1,2,3,4,5]
 }
 },
-{ timestamps: true } 
+{ timestamps: true   } 
 ) 
-
-
+    reviewSchema.pre(/^find/,function(){
+       this.populate('user', 'name') 
+    })
+ 
 export const reviewModel=model('review',reviewSchema)
