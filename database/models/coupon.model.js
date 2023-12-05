@@ -5,10 +5,11 @@ const couponSchema=new Schema({
         type:String,
         required:true,
         trim:true,
+        uninque:true
     },
  
 expires:{
-    type:Date,
+    type:String,
     required:true,
 
 },
