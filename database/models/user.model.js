@@ -34,7 +34,16 @@ const userSchema=new Schema({
         blocked:{
             type:Boolean,
             default:false,
-        }
+        },
+        wishList:{
+            type:Schema.ObjectId,
+            ref:"product",
+        },
+        addresses:{
+            city:String,
+            Steet:String,
+            phone:String,
+        },
 },
 { timestamps: true } 
 )
