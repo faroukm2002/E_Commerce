@@ -13,11 +13,12 @@ expires:{
     required:true,
 
 },
-discount:{
-    type:Number,
-    requiredL:true,
-    min:0
-}
+discount: {
+    type: Number,
+    min: 0,
+    required: [true, 'coupon discount required'],
+
+},
 
 
 },

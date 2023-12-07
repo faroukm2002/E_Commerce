@@ -18,7 +18,7 @@ get(product.getAllproduct)
 productRouter.route('/:id').
 get(product.getproductByID).
 
-put(protectRoutes ,allowedto('admin'),product.updateproduct).
+put(protectRoutes ,allowedto('admin','user'),product.updateproduct).
 delete(protectRoutes ,allowedto('admin'),product.deleteproduct)
 
 export default productRouter
