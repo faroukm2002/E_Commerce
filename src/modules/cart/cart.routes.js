@@ -15,7 +15,7 @@ cartRouter.put("/:apllycoupon",protectRoutes,allowedto('user'),cart.applyCoupon)
 cartRouter.route('/:id').
 
 delete( protectRoutes ,allowedto('admin','user'),cart.removeProductFromPrice).
-put( protectRoutes ,allowedto('user'),cart.updateCart)
+put( protectRoutes ,allowedto('user'),cart.updateQuantity)
 
 // get(cart.getcartByID).
 
