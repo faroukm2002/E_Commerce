@@ -5,11 +5,11 @@ const orderRouter =express.Router()
 
 
 
-// orderRouter.route('/').
+orderRouter.route('/').
 // post(protectRoutes ,allowedto('user'),order.createCashOrder)
-// get(protectRoutes ,allowedto('user'),order.getorder)
+get(protectRoutes ,allowedto('user'),order.getSpecificOrder)
 
-
+orderRouter.get('/all',order.getAllOrders)
 
 orderRouter.route('/:id').
 post(protectRoutes ,allowedto('user'),order.createCashOrder)

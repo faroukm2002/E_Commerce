@@ -52,14 +52,19 @@ else {
 })
 
 
+const getSpecificOrder= catchError(async(req,res,next)=>{
+let order =await orderModel.findOne({user:req.user._id}).populate('cartItems.product')
+res.status(201).json({message:"Done",order})
+})
 
 
 
-
-
-
-
+const getAllOrders= catchError(async(req,res,next)=>{
+  let order =await orderModel.find({}).populate('cartItems.product')
+  res.status(201).json({message:"Done",order})
+  })
 export { 
   createCashOrder,  
-
+  getSpecificOrder,
+  getAllOrders
  }
