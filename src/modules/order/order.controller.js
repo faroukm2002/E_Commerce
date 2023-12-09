@@ -109,13 +109,18 @@ const createCheckOutSession = catchError(async (req, res, next) => {
           }
         ],
         mode: "payment",
-        success_url: "https://route-comm.netlify.app/#/",
-        cancel_url: "https://route-comm.netlify.app/#/cart",
-        customer_email: req.user.email,
-        // cartId
-        client_reference_id: req.params.id,
-        metadata: req.body.shippingAddress
+      success_url: "https://route-comm.netlify.app/#/",
+      cancel_url: "https://route-comm.netlify.app/#/cart",
+      customer_email: req.user.email,
+           
+      // cartId
+      client_reference_id: req.params.id,
+      metadata: req.body.shippingAddress
     });
+
+
+
+  
     res.status(201).json({ message: "Done", session });
 });
 
