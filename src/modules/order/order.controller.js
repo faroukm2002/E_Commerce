@@ -4,7 +4,7 @@ import { productModel } from "../../../database/models/product.model.js";
 import { catchError } from "../../utils/catchError.js";
 import Stripe from "stripe";
 
-const stripe = new Stripe("sk_test_51Nwr4pCoU9tsVsX0WoMZTryoJw6clsSX9dhD9y4DRPbYhujA3mHFsW8P8OUf6tt0sEi9NxEcOzKDAXGpq3L3jMi800NGi60cgN");
+const stripe = new Stripe(process.env.STRIPE_KEY);
 const createCashOrder = catchError(async (req, res, next) => {
   // 1- get cart (cartId)
 
@@ -102,15 +102,15 @@ const createCheckOutSession = catchError(async (req, res, next) => {
               product_data: {
                 name:req.user.name,
               },
-              unit_amount: totaOrderPrice * 100,
+              unit_amount: totaOrderPrice * 100,  
              
             },
             quantity: 1,
           }
         ],
         mode: "payment",
-      success_url: "https://route-comm.netlify.app/#/",
-      cancel_url: "https://route-comm.netlify.app/#/cart",
+      success_url:process.env.SUCCESS_URL ,
+      cancel_url: process.env.CANCEL_URL,
       customer_email: req.user.email,
            
       // cartId
@@ -134,31 +134,63 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
-const createOnlineOrder = catchError( (req, res, next) => {
+// const createOnlineOrder = catchError( (req, res, next) => {
+//   const sig = request.headers['stripe-signature'].toString();
+
+//   let event;
+
+//   try {
+//     event = stripe.webhooks.constructEvent(request.body, sig, "whsec_RiFdJMSOw3ULGpyPOucbMzn1ulVDUXv3");
+//   } catch (err) {
+//     return  response.status(400).send(`Webhook Error: ${err.message}`);
+//   }
+
+
+//   // Handle the event
+
+//   if(event.type === 'checkout.session.completed'){
+//     const checkoutSessionCompleted = event.data.object;
+//     console.log("create order here.......")
+//   }
+//   else{
+//     console.log(`Unhandled event type ${event.type}`);
+
+//   }
+
+
+// });
+
+
+
+
+
+
+
+const WebHook=catchError(async(req, res) => {
+
   const sig = request.headers['stripe-signature'].toString();
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, "whsec_RiFdJMSOw3ULGpyPOucbMzn1ulVDUXv3");
+    event = stripe.webhooks.constructEvent(request.body, sig, process.env.ENDPOINTSECRET);
   } catch (err) {
-    return  response.status(400).send(`Webhook Error: ${err.message}`);
+    return response.status(400).send(`Webhook Error: ${err.message}`);
   }
-
-
+if(event.type=="checkout.session.completed") {
+  const checkoutSessionCompleted = event.data.object;
+  console.log("create order here.......")
+}
+else{
   // Handle the event
-
-  if(event.type === 'checkout.session.completed'){
-    const checkoutSessionCompleted = event.data.object;
-    console.log("create order here.......")
-  }
-  else{
-    console.log(`Unhandled event type ${event.type}`);
-
-  }
-
-
+  console.log(`Unhandled event type ${event.type}`);
+}
 });
+
+
+
+
+
 
 
   
@@ -167,5 +199,6 @@ export {
   getSpecificOrder,
   getAllOrders,
   createCheckOutSession,
-  createOnlineOrder
+  // createOnlineOrder
+  WebHook
 };

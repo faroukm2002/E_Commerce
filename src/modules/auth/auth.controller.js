@@ -22,7 +22,7 @@ const signIn = catchError(async (req, res, next) => {
 
   let token = jwt.sign(
     { name: user.name, email: user.email, id: user._id, role: user.role },
-    "farouk"
+    process.env.TOKEN_SIGNATURE
   );
 
   // Created
@@ -39,7 +39,7 @@ const protectRoutes=catchError(async(req,res,next)=>{
   let { token } = req.headers;
   if (!token) return next(new AppError("please provide token", 401))
   
-  let decoded = await jwt.verify(token, "farouk");
+  let decoded = await jwt.verify(token, process.env.TOKEN_SIGNATURE);
 console.log(decoded)
 
 let user = await userModel.findById(decoded.id)

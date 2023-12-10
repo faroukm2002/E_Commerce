@@ -16,6 +16,16 @@ post(protectRoutes ,allowedto('user'),order.createCashOrder)
 
 
 
+
+
+orderRouter.post('/webhook', express.raw({type: 'application/json'}), order.WebHook )
+
+
+
+
+
+
+
 export default orderRouter
 
 
