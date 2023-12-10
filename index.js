@@ -2,7 +2,6 @@ import express from "express";
 import { dbConnection } from "./database/dbConnection.js";
 import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
-import cors from 'cors'
 
 const app = express();
 import cors from 'cors'
