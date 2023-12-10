@@ -4,7 +4,7 @@ import { productModel } from "../../../database/models/product.model.js";
 import { catchError } from "../../utils/catchError.js";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_KEY);
+const stripe = new Stripe("sk_test_51Nwr4pCoU9tsVsX0WoMZTryoJw6clsSX9dhD9y4DRPbYhujA3mHFsW8P8OUf6tt0sEi9NxEcOzKDAXGpq3L3jMi800NGi60cgN");
 const createCashOrder = catchError(async (req, res, next) => {
   // 1- get cart (cartId)
 
