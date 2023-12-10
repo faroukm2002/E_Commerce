@@ -78,7 +78,7 @@ const removeProductFromPrice = catchError(async (req, res, next) => {
 
 
 
-const updateCart= catchError(async(req,res,next)=>{
+const updateQuantity= catchError(async(req,res,next)=>{
   let product = await productModel.findById(req.params.id)
   if(!product)    return next(new AppError("product not found",404))
 
@@ -89,6 +89,9 @@ const updateCart= catchError(async(req,res,next)=>{
 }
 
 calcTotalPrice(isCartExist)
+if (isCartExist.discount) isCartExist.totalPriceAfterDiscount = isCartExist.totalPrice - (isCartExist.totalPrice * isCartExist.discount) / 100;
+
+
  await isCartExist.save()
  res.status(201).json({message:"Done",cart:isCartExist})
 
@@ -123,5 +126,5 @@ export {
   removeProductFromPrice,
   applyCoupon,
   getCart,
-  updateCart
+  updateQuantity
  }

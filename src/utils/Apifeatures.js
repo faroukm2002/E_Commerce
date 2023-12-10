@@ -51,8 +51,8 @@ search(){
 {
   this.mongooseQuery.find({
     $or:[
-      {title:{$regex:this.queryString.keyword,$options:'i'}},
-      {description:{$regex:this.queryString.keyword,$options:'i'}}
+      {name:{$regex:this.queryString.keyword,$options:'i'}},
+      {email:{$regex:this.queryString.keyword,$options:'i'}}
 
     ]
   })

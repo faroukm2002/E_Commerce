@@ -33,7 +33,12 @@ min:0,
         maxlength:[100,"description should be less tan or equal to 20 characters"]
 
     },
-    stock:{
+    // stock:{
+    //     type:Number,
+    //     default:0,
+    //     min:0
+    // },
+    quantity:{
         type:Number,
         default:0,
         min:0
