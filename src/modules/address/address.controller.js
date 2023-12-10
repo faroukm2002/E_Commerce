@@ -1,7 +1,7 @@
 import { catchError } from "../../utils/catchError.js";
 import { AppError } from "../../utils/AppError.js";
 import { Apifeatures } from "../../utils/Apifeatures.js";
-import { userModel } from "../../../database/models/User.model.js";
+import { userModel } from "../../../database/models/user.model.js";
 
 const addAddress = catchError(async (req, res, next) => {
   let results = await userModel.findByIdAndUpdate(
