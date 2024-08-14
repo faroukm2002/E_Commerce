@@ -50,13 +50,13 @@ const userSchema=new Schema({
 // hash password bt4 adduser signUP **************
 userSchema.pre('save',function(){
     // console.log(this)
-    this.password=bcrypt.hashSync(this.password,process.env.SALT_ROUND)
+    this.password=bcrypt.hashSync(this.password,parseInt(process.env.SALT_ROUND))
 })
 
 // hash changepassword ************** 
 userSchema.pre('findOneAndUpdate',function(){
 // console.log(this)
-    if(this._update.password)this._update.password=bcrypt.hashSync(this._update.password,process.env.SALT_ROUND)
+    if(this._update.password)this._update.password=bcrypt.hashSync(this._update.password,parseInt(process.env.SALT_ROUND))
 })
 
 

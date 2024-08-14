@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken"; // Correct import
 
 const signUp = catchError(async (req, res, next) => {
   let isUser = await userModel.findOne({ email: req.body.email });
-  if (isUser) next(new AppError("Account already exists", 409));
+  if (isUser) return next(new AppError("Account already exists", 409));
   const user = new userModel(req.body);
   await user.save();
 

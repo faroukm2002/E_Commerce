@@ -1,4 +1,4 @@
-  
+
 import { Schema,Types,model } from "mongoose"
 const productSchema=new Schema({
     title:{
@@ -30,7 +30,7 @@ min:0,
         required:true,
         trim:true,
         minlength:[10,"too short product description"],
-        maxlength:[100,"description should be less tan or equal to 20 characters"]
+        maxlength:[300,"description should be less tan or equal to 300 characters"]
 
     },
     // stock:{
@@ -91,11 +91,15 @@ productSchema.post("init", (doc) => {
 
 
     if (doc.imgCover && doc.images){
+
     doc.imgCover = process.env.BASE_URL + "product/" + doc.imgCover;
      doc.images = doc.images.map((path) => process.env.BASE_URL + "product/" + path);
     }
   }); 
-  
+  productSchema.post('init', function(doc) {
+    const encodedImage = encodeURIComponent(doc.image);
+    doc.image = `${process.env.BASEURL}/teacher/${encodedImage}`;
+});
   
   productSchema.virtual('myReviews', {
     ref: 'review',
