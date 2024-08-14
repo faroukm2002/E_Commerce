@@ -15,7 +15,7 @@ import cartRouter from "./modules/cart/cart.routes.js";
 import orderRouter from "./modules/order/order.routes.js";
 
 export function bootstrap(app) {
-  app.get("/", (req, res) => res.send("Hello World!"));
+  app.get("/", (req, res) => res.send("Welcom e-Commerce!"));
   app.use("/api/v1/categories", categoryRouter);
   app.use("/api/v1/subcategories", subCategoryRouter);
   app.use("/api/v1/brands", brandRouter);
