@@ -135,20 +135,23 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
-dotenv.config();
+
 
 
 const createOnlineOrder = catchError(async (req, res, next) => {
   const sig = req.headers['stripe-signature'];
 
-  if (!sig) {
-    console.error('Missing Stripe signature');
-    return res.status(400).send('Webhook signature missing');
+  // Log the signature for debugging purposes
+  console.log("Stripe Signature:", sig);
+
+  if (!process.env.END_POINT) {
+    console.error("Stripe webhook secret not defined");
+    return res.status(400).send("Stripe webhook secret not defined");
   }
 
   let event;
   try {
-    // Pass raw body directly to stripe.webhooks.constructEvent
+    // Verify the webhook signature
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.END_POINT);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
@@ -204,6 +207,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
   console.log(`Unhandled event type: ${event.type}`);
   res.status(200).send();
 });
+
 
 
 
