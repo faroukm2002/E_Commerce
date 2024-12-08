@@ -143,7 +143,11 @@ const createOnlineOrder = catchError(async (req, res, next) => {
   let event;
   try {
     // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.END_POINT_SECRET);
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.END_POINT_SECRET 
+    );
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -154,15 +158,9 @@ const createOnlineOrder = catchError(async (req, res, next) => {
     const session = event.data.object;
 
     // Get cart and user details
-    if (!session.client_reference_id) {
-      return res.status(400).send("Missing cart ID");
-    }
     const cart = await cartModel.findById(session.client_reference_id);
     if (!cart) return next(new AppError('Cart not found', 404));
 
-    if (!session.customer_email) {
-      return res.status(400).send("Missing customer email");
-    }
     const user = await userModel.findOne({ email: session.customer_email });
     if (!user) return next(new AppError('User not found', 404));
 
