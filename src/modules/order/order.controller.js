@@ -181,29 +181,29 @@ const createOnlineOrder = catchError( (req, res, next) => {
 
 const WebHook=catchError((req, res) => {
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-  const sig = request.headers['stripe-signature'];
+  const sig = req.headers['stripe-signature'];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig,process.env.END_POINT_SECRET);
+    event = stripe.webhooks.constructEvent(req.body.toString(), sig, process.env.SIGNING_SECRETE);
+    console.log("Signing Secret:", process.env.SIGNING_SECRETE);
+
   } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+    console.error(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   // Handle the event
   if (event.type === 'checkout.session.completed') {
-    orderOnline(event.data.object);
-    console.log("Create order here...");
+    orderOnline(event.data.object, res); // Call your order creation logic
+    console.log("Order created successfully!");
   } else {
-    console.log(`Unhandled event type ${event.type}`);
+    console.log(`Unhandled event type: ${event.type}`);
   }
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
-}) 
+
+  res.status(200).send('Webhook received');
+});
 
 
 
