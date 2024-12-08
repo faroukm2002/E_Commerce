@@ -207,7 +207,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
 
 
 
-
+ 
 
   
 export {
@@ -216,58 +216,13 @@ export {
   getAllOrders,
   createCheckOutSession,
   createOnlineOrder,
-  // WebHook
 };
 
 
 
-//  async function orderOnline (e,res){
-//    // 1- get cart (cartId)
 
-//    let cart = await cartModel.findById(e.client_reference_id);
-// if (!cart) return next(new AppError('Cart not found',404))
-//  let user =await userModel.findOne({email: e.customer_email})
 
-//   let order = new orderModel({
-//      user:user._id,
-//      cartItems: cart.cartItems,
-//      totalOrderPrice:e.amount_total /100,
-//      shippingAddress: e.metadata.shippingAddress,
-//      paymentMethod:"card",
-//      isPaid:true,
-//      paidAt:Date.now()
-
-//    });
  
-//    await order.save();
- 
-//    // 4-increment sold $ quantity 
-//    // using bulkWrite
- 
-//    if (order) {
-//      let options = cart.cartItems.map((item) => ({
-//        updateOne: {
-//          filter: { _id: item.product },
-//          update: {
-//            $inc: {
-//              quantity: -item.quantity,
-//              sold: item.quantity,
-//            },
-//          }, 
-//        },
-//      }));
-//      await productModel.bulkWrite(options);
- 
-//      // 5- clear user cart
-//      await cartModel.findOneAndDelete({user: user._id});
-//      return res.status(201).json({ message: "Order created successfully. Your cart has been cleared", order });
-//    } else {
-//      return next(new AppError("error in cart id ", 404));
-//    }
-// }
-
-
-
 
 
 
