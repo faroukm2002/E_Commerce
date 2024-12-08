@@ -146,7 +146,7 @@ const createOnlineOrder = catchError( (req, res, next) => {
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.SIGNING_SECRETE);
+    event = stripe.webhooks.constructEvent(req.body, sig, "whsec_d0ysUkueXWxKw0kMBDUawTNPb9D0P24V");
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
