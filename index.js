@@ -2,7 +2,6 @@ import express from "express";
 import { dbConnection } from "./database/dbConnection.js";
 import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
-// import { createOnlineOrder } from "./src/modules/order/order.controller.js";
 import dotenv from "dotenv";
 import cors from 'cors'
 import { createOnlineOrder } from "./src/modules/order/order.controller.js";
