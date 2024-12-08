@@ -4,13 +4,16 @@ import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from 'cors'
-import {  WebHook } from "./src/modules/order/order.controller.js";
+import { createOnlineOrder } from "./src/modules/order/order.controller.js";
 
 dotenv.config();
 const app = express();
 const port = 3000;
-app.post('/webhook', express.raw({type: 'application/json'}),WebHook), 
-app.use(express.json());
+app.post(
+    '/webhook',
+    express.raw({ type: 'application/json' }), // Raw body for Stripe verification
+    createOnlineOrder
+  );app.use(express.json());
 
 
 
