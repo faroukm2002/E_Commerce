@@ -186,7 +186,7 @@ const WebHook=catchError((req, res) => {
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body.toString(), sig, process.env.SIGNING_SECRETE);
+    event = stripe.webhooks.constructEvent(req.body.toString(), sig, "whsec_RazXixzZVRYcK5SUpUShyxShdbon5IoI");
     console.log("Signing Secret:", process.env.SIGNING_SECRETE);
 
   } catch (err) {
