@@ -141,30 +141,30 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
-const createOnlineOrder = catchError( (req, res, next) => {
-  const sig = req.headers['stripe-signature'].toString();
+// const createOnlineOrder = catchError( (req, res, next) => {
+//   const sig = req.headers['stripe-signature'].toString();
 
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, "whsec_d0ysUkueXWxKw0kMBDUawTNPb9D0P24V");
-  } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
+//   let event;
+//   try {
+//     event = stripe.webhooks.constructEvent(req.body, sig, "whsec_d0ysUkueXWxKw0kMBDUawTNPb9D0P24V");
+//   } catch (err) {
+//     return res.status(400).send(`Webhook Error: ${err.message}`);
+//   }
   
 
 
-  // Handle the event
+//   // Handle the event
 
-  if (event.type === 'checkout.session.completed') {
-    orderOnline(event.data.object);
-    console.log("Create order here...");
-  } else {
-    console.log(`Unhandled event type ${event.type}`);
-  }
+//   if (event.type === 'checkout.session.completed') {
+//     orderOnline(event.data.object);
+//     console.log("Create order here...");
+//   } else {
+//     console.log(`Unhandled event type ${event.type}`);
+//   }
   
 
 
-});
+// });
 
 
 
@@ -217,7 +217,7 @@ export {
   getSpecificOrder,
   getAllOrders,
   createCheckOutSession,
-  createOnlineOrder,
+  // createOnlineOrder,
   WebHook
 };
 
