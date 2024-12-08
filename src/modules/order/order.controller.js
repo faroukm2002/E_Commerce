@@ -171,14 +171,54 @@ const createOnlineOrder = catchError( (req, res, next) => {
 
 
 
+
+
+
+
+
+
+
+
+const WebHook=catchError((req, res) => {
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+  const sig = request.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig,process.env.END_POINT_SECRET);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  if (event.type === 'checkout.session.completed') {
+    orderOnline(event.data.object);
+    console.log("Create order here...");
+  } else {
+    console.log(`Unhandled event type ${event.type}`);
+  }
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+}) 
+
+
+
+
+
+
+
   
 export {
   createCashOrder,
   getSpecificOrder,
   getAllOrders,
   createCheckOutSession,
-  createOnlineOrder
-  // WebHook
+  createOnlineOrder,
+  WebHook
 };
 
 
@@ -227,3 +267,24 @@ if (!cart) return next(new AppError('Cart not found',404))
      return next(new AppError("error in cart id ", 404));
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
