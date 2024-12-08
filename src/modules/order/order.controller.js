@@ -146,7 +146,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.END_POINT_SECRET
+      process.env.END_POINT
     );
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
