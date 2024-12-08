@@ -18,13 +18,12 @@ const signIn = catchError(async (req, res, next) => {
   const { email, password } = req.body;
   let user = await userModel.findOne({ email });
   if (!user || !bcrypt.compareSync(password, user.password))
-    return next(new AppError("Account already exists", 409));
+    return next(new AppError("incorrect email or password", 409));
 
   let token = jwt.sign(
     { name: user.name, email: user.email, id: user._id, role: user.role },
     process.env.TOKEN_SIGNATURE
   );
-
   // Created
   res.status(201).json({ message: "success", token });
 });
@@ -35,6 +34,10 @@ const signIn = catchError(async (req, res, next) => {
 // 3 if user of this token exist or not 
 // 4- check if this token is the last one or not (change password )
 
+
+
+
+//  authentication
 const protectRoutes=catchError(async(req,res,next)=>{
   let { token } = req.headers;
   if (!token) return next(new AppError("please provide token", 401))
@@ -59,6 +62,8 @@ next()
 })
 
 
+// autherization 
+//  admin or user can access 
 const allowedto = (...roles) => {
   // ['admin','user'] b4of mokod wla laa
   return catchError(async (req, res, next) => {

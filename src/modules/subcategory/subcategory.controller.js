@@ -19,15 +19,15 @@ res.status(201).json({message:"success",subCategory})
 })
 
 const getAllsubCategory= catchError(async(req,res,next)=>{
-    let filter={}
+    let filterObj={}
   if(req.params.categoryId){
-    filter={category:req.params.categoryId}
+    filterObj={category:req.params.categoryId}
   }
   // const subcategories= await subCategoryModel.find(filter)
   // // created
   // res.status(201).json({message:"success",subcategories})
   
-  let apifeatures= new Apifeatures( subCategoryModel.find(),req.query)
+  let apifeatures= new Apifeatures( subCategoryModel.find(filterObj),req.query)
   .pagination().fields().filter().search().sort()
   
     const results = await apifeatures.mongooseQuery

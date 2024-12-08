@@ -34,8 +34,8 @@ const getAllbrand= catchError(async(req,res,next)=>{
 
 
   const getbrandByID= catchError(async(req,res,next)=>{
-    const product= await productModel.findById(req.params.id)
-    res.status(201).json({message:"success",product})
+    const brand= await brandModel.findById(req.params.id)
+    res.status(201).json({message:"success",brand})
     
     })
 

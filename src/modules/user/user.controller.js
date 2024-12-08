@@ -12,7 +12,6 @@ import { userModel } from "../../../database/models/user.model.js";
 const addUser= catchError(async(req,res,next)=>{
   let users=await userModel.findOne({email:req.body.email})
   if(users) return next(new AppError("duplicate email",409))
-  req.body.slug=slugify(req.body.name)
 const User= new userModel(req.body)
 await User.save()
 // created
@@ -24,16 +23,11 @@ res.status(201).json({message:"success",User})
 
 
 const getAllUser= catchError(async(req,res,next)=>{
-  // const Users= await userModel.find()
-  // // created
-  // res.status(201).json({message:"success",Users})
-
-
   let apifeatures= new Apifeatures( userModel.find(),req.query)
   .pagination().fields().filter().search().sort()
   
-    const results = await apifeatures.mongooseQuery
-    res.status(201).json({ message: 'success', page:apifeatures.page, results });
+    const users = await apifeatures.mongooseQuery
+    res.status(201).json({ message: 'success', page:apifeatures.page, users });
   
   })
 
@@ -47,8 +41,7 @@ const getAllUser= catchError(async(req,res,next)=>{
 
 const updateUser= catchError(async(req,res,next)=>{
   const{id}=req.params
-  req.body.slug=slugify(req.body.name)
-  const User= await userModel.findByIdAndUpdate(
+   const User= await userModel.findByIdAndUpdate(
     id,
     req.body,
     {new:true})
@@ -64,7 +57,7 @@ const updateUser= catchError(async(req,res,next)=>{
   
 
 
-
+// user or admin can change password
   const changeUserPassword= catchError(async(req,res,next)=>{
     const{id}=req.params
     req.body.changePasswordAt = Date.now();

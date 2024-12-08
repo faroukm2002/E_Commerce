@@ -8,11 +8,6 @@ authRouter.post('/signUp',auth.signUp)
 authRouter.post('/signIn',auth.signIn)
 
 
-// brandRouter.route('/:id').
-// get(brand.getbrandByID).
-
-// put(brand.updatebrand).
-// delete(brand.deletebrand)
 
 export default authRouter
 

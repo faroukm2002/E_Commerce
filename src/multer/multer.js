@@ -11,7 +11,7 @@ function refactorMulter(folderName) {
       cb(null, uuidv4() + " - " + file.originalname);
     },
   });
-
+// filter image or vieode or text
   function fileFilter(req, file, cb) {
     if (file.mimetype.startsWith("image")) {
       cb(null, true);
@@ -27,4 +27,5 @@ function refactorMulter(folderName) {
 export const uploadSingleFile = (fieldName, folderName) => refactorMulter(folderName).single(fieldName);
 
 export const uploadMixFiles = (arrOFfields, folderName) => refactorMulter(folderName).fields(arrOFfields);
+ 
  

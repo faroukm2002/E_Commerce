@@ -9,7 +9,7 @@
     "start": "node index.js "
   },
   "engines": {
-    "node": "20.x"
+    "node": "17.3.1"
   },
   "keywords": [],
   "author": "",

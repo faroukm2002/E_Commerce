@@ -10,7 +10,7 @@ import { reviewModel } from "../../../database/models/review.model.js";
 
 const addReview= catchError(async(req,res,next)=>{
   req.body.user=req.user._id
- 
+//  find by user and product
   let isReview=await reviewModel.findOne({user:req.user._id,product:req.body.product})
   if(isReview)return next(new AppError('you created review before',409))
   const Review= new reviewModel(req.body)

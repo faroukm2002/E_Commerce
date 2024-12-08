@@ -7,6 +7,7 @@ const addAddress = catchError(async (req, res, next) => {
   let results = await userModel.findByIdAndUpdate(
     req.user._id,
     {
+      // addresses are object >>>>> req.body
       $addToSet: { addresses: req.body },
     },
     { new: true }
@@ -23,6 +24,7 @@ const removeAddress = catchError(async (req, res, next) => {
     req.user._id,
 
     {
+          // addresses are object >>>>> find by id to delete
       $pull: { addresses: {_id: req.body.addresses }},
     },
     { new: true }

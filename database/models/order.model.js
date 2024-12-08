@@ -9,7 +9,7 @@ const orderSchema=new Schema({
             price:Number,
         }
     ],
-    totaOrderPrice:Number,
+    totalOrderPrice:Number,
     shippingAddress:{
         stree:String,
         city:String,

@@ -19,12 +19,12 @@ min:0,
 
 },
 
- priceAfterDiscount:{
-    type:Number,
-    default:0,
-    min:0,
+//  priceAfterDiscount:{
+//     type:Number,
+//     default:0,
+//     min:0,
     
-    },  
+//     },  
       description:{
         type:String,
         required:true,
@@ -51,9 +51,8 @@ min:0,
     imgCover:{
         type:String
     },
-    images:{
-    type:[String]
-    },
+    images:[String],
+   
 
     category:{
         type:Schema.ObjectId,
@@ -87,20 +86,20 @@ min:0,
 },
 { timestamps: true,toJSON: { virtuals: true },toObject: { virtuals: true } } 
 )
+
 productSchema.post("init", (doc) => {
-
-
-    if (doc.imgCover && doc.images){
-
-    doc.imgCover = process.env.BASE_URL + "product/" + doc.imgCover;
-     doc.images = doc.images.map((path) => process.env.BASE_URL + "product/" + path);
+    if (doc.imgCover && doc.images) {
+      console.log('imgCover URL:', process.env.BASEURL + "product/" + encodeURIComponent(doc.imgCover));
+      console.log('images URL:', doc.images.map((path) => process.env.BASEURL + "product/" + encodeURIComponent(path)));
+      
+      doc.imgCover = process.env.BASEURL + "product/" + encodeURIComponent(doc.imgCover);
+      doc.images = doc.images.map((path) => process.env.BASEURL + "product/" + encodeURIComponent(path));
     }
-  }); 
-  productSchema.post('init', function(doc) {
-    const encodedImage = encodeURIComponent(doc.image);
-    doc.image = `${process.env.BASEURL}/teacher/${encodedImage}`;
-});
+  });
   
+  
+ 
+//   virtuea populate
   productSchema.virtual('myReviews', {
     ref: 'review',
     localField: '_id',

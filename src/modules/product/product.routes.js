@@ -24,3 +24,4 @@ delete(protectRoutes ,allowedto('admin'),product.deleteproduct)
 export default productRouter
 
 
+ 

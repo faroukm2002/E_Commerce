@@ -1,6 +1,5 @@
 import { catchError } from "../../utils/catchError.js";
 import { AppError } from "../../utils/AppError.js";
-import { Apifeatures } from "../../utils/Apifeatures.js";
 import { userModel } from "../../../database/models/user.model.js";
 
 const addToWishList = catchError(async (req, res, next) => {
@@ -13,7 +12,7 @@ const addToWishList = catchError(async (req, res, next) => {
     { new: true }
   );
   !results && next(new AppError("not found wishList", 404));
-  results && res.json({ message: "Done", results });
+  results && res.json({ message: "Done", results: results.wishList });
 });
 
 
@@ -37,11 +36,11 @@ const removeWishList = catchError(async (req, res, next) => {
 
 const getAllWishList = catchError(async (req, res, next) => {
   let results = await userModel
-    .findOne({ _id: req.user._id })
-    .populate("wishList");
+    .findById( req.user._id )
+    // .populate("wishList");
 
   !results && next(new AppError("not found wishList", 401));
-  results && res.json({ message: "Done", results });
+  results && res.json({ message: "Done", results: results.wishList });
 });
 
 export { 

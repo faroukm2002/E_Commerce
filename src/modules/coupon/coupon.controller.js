@@ -39,7 +39,7 @@ const getAllCoupon= catchError(async(req,res,next)=>{
 
 const updateCoupon= catchError(async(req,res,next)=>{
    let { id } = req.params; // id Coupon 
-  const Coupon= await couponModel.findOneAndUpdate( id,req.body,{new:true})
+  const Coupon= await couponModel.findOneAndUpdate( {_id:id},req.body,{new:true})
     
     
    

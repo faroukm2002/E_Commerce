@@ -16,19 +16,28 @@ const addproduct= catchError(async(req,res,next)=>{
 
 const product= new productModel(req.body)
 await product.save()
-
+ 
 res.status(201).json({message:"success",product})
 
 })
 
 const getAllproduct = catchError(async (req, res, next) => {
-
-
+  const limit = 4; // Default limit for pagination
+  const totalDocuments = await productModel.countDocuments(); // Step 1: Count total documents
+  
   let apifeatures= new Apifeatures( productModel.find(),req.query)
 .pagination().fields().filter().search().sort()
 
   const results = await apifeatures.mongooseQuery
-  res.status(201).json({ message: 'success', page:apifeatures.page, results });
+  const totalPages = Math.ceil(totalDocuments / limit); // Calculate total pages
+  const nextPage = apifeatures.page < totalPages ? apifeatures.page + 1 : null; // Determine next page
+
+  res.status(201).json({ message: 'success',
+    currentPage: apifeatures.page,
+    numberOfPages: totalPages,
+    limit,
+    nextPage,
+    results, });
 
 // build query
 // let mongooseQuery= productModel.find(filterObj);
@@ -65,11 +74,14 @@ const getAllproduct = catchError(async (req, res, next) => {
 // // 3-sort=======
 
 // if (req.query.sort)
-// {
+// { 
 //   let sortBy = req.query.sort.split(",").join(" "); //["-price","sold"] => -price sold
 //   mongooseQuery.sort(sortBy)
 // }
 // ************************
+
+
+
 
 // 4-search=======
 

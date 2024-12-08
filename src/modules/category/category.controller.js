@@ -12,6 +12,9 @@ import { Apifeatures } from "../../utils/Apifeatures.js";
 const addCategory= catchError(async(req,res,next)=>{
   req.body.slug=slugify(req.body.name)
   req.body.image=req.file.filename
+  console.log(req.file)
+const existCategory=await categoryModle.findOne({name:req.body.name})
+if (existCategory) return next(new AppError("Category name already exists", 400));
 
 const category= new categoryModle(req.body)
 await category.save()
@@ -32,9 +35,9 @@ const getAllCategory= catchError(async(req,res,next)=>{
   const results = await apifeatures.mongooseQuery
   res.status(201).json({ message: 'success', page:apifeatures.page, results });
 
-  })
+  }) 
 
-
+ 
 
   
   const getcategoryByID= catchError(async(req,res,next)=>{
