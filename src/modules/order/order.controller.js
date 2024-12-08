@@ -135,19 +135,21 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
+dotenv.config();
 
 
 const createOnlineOrder = catchError(async (req, res, next) => {
   const sig = req.headers['stripe-signature'];
 
+  if (!sig) {
+    console.error('Missing Stripe signature');
+    return res.status(400).send('Webhook signature missing');
+  }
+
   let event;
   try {
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.END_POINT
-    );
+    // Pass raw body directly to stripe.webhooks.constructEvent
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.END_POINT);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
