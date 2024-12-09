@@ -136,22 +136,14 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
-
-
+// Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'].toString();
-  if (!sig) {
-    return res.status(400).send('Missing stripe-signature header');
-  }
-  console.log('Request body:', req.body);  // Log the raw body to check it
-  console.log('Stripe signature:', sig);   // Log the stripe-signature
-  console.log('Webhook secret:', process.env.STRIPE_WEBHOOK_SECRET);  // Check the webhook secret
-  
+  const sig = req.headers['stripe-signature'];  // Get the signature from the header
   let event;
+
   try {
     // Verify the webhook signature
-     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-    
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -161,7 +153,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    // Get cart and user details
+    // Get cart and user details using session data
     const cart = await cartModel.findById(session.client_reference_id);
     if (!cart) return next(new AppError('Cart not found', 404));
 
@@ -172,7 +164,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
     const order = new orderModel({
       user: user._id,
       cartItems: cart.cartItems,
-      totalOrderPrice: session.amount_total / 100,
+      totalOrderPrice: session.amount_total / 100,  // Convert amount to the correct currency
       shippingAddress: session.metadata.shippingAddress,
       paymentMethod: "card",
       isPaid: true,
@@ -213,6 +205,8 @@ const createOnlineOrder = catchError(async (req, res, next) => {
 
 
 
+
+
  
 
   
@@ -221,7 +215,7 @@ export {
   getSpecificOrder,
   getAllOrders,
   createCheckOutSession,
-  createOnlineOrder,
+  createOnlineOrder
 };
 
 
