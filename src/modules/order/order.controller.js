@@ -138,17 +138,20 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 // Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'].toString();  // Get the signature from the header
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const sig = req.headers['stripe-signature'];
   let event;
-
+  
   try {
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(
+      req.rawBody,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET // Ensure this is not undefined
+    );
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+  
 
   // Handle the event
   if (event.type === 'checkout.session.completed') {

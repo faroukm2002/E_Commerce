@@ -12,11 +12,9 @@ const port = 3000;
 
 // Middleware for JSON body parsing with special handling for Stripe webhooks
 app.use(express.json({
-  // Special case: Compute raw body only for Stripe webhook
-  verify: function (req, res, buf) {
-    const url = req.originalUrl;
-    if (url.endsWith('/webhook')) {
-      req.rawBody = buf.toString(); // Save raw body for Stripe signature verification
+  verify: (req, res, buf) => {
+    if (req.originalUrl === '/webhook') {
+      req.rawBody = buf.toString();
     }
   }
 }));
