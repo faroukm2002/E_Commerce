@@ -140,6 +140,7 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 const createOnlineOrder = catchError(async (req, res, next) => {
   const sig = req.headers['stripe-signature'];
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   let event;
   try {
