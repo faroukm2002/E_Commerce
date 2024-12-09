@@ -139,6 +139,8 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 // Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
   const sig = req.headers['stripe-signature'];  // Get the signature from the header
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
   let event;
 
   try {
@@ -149,11 +151,11 @@ const createOnlineOrder = catchError(async (req, res, next) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Handle checkout.session.completed event
+  // Handle the event
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    // Get cart and user details using session data
+    // Get cart and user details
     const cart = await cartModel.findById(session.client_reference_id);
     if (!cart) return next(new AppError('Cart not found', 404));
 
@@ -164,7 +166,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
     const order = new orderModel({
       user: user._id,
       cartItems: cart.cartItems,
-      totalOrderPrice: session.amount_total / 100,  // Convert amount to the correct currency
+      totalOrderPrice: session.amount_total / 100,
       shippingAddress: session.metadata.shippingAddress,
       paymentMethod: "card",
       isPaid: true,
@@ -198,6 +200,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
   console.log(`Unhandled event type: ${event.type}`);
   res.status(200).send();
 });
+
 
 
 
