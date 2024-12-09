@@ -140,12 +140,18 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 const createOnlineOrder = catchError(async (req, res, next) => {
   const sig = req.headers['stripe-signature'].toString();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
+  if (!sig) {
+    return res.status(400).send('Missing stripe-signature header');
+  }
+  console.log('Request body:', req.body);  // Log the raw body to check it
+  console.log('Stripe signature:', sig);   // Log the stripe-signature
+  console.log('Webhook secret:', process.env.STRIPE_WEBHOOK_SECRET);  // Check the webhook secret
+  
   let event;
   try {
     // Verify the webhook signature
      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
