@@ -138,63 +138,67 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 // Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'].toString();  // Get the signature from the header
-  let event;
+  const sig = req.headers['stripe-signature'];
+  if (!sig) {
+    return res.status(400).send("Webhook Error: Stripe signature is missing");
+  }
 
+  let event;
   try {
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(
+      req.rawBody,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Handle the event
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
+    try {
+      const session = event.data.object;
 
-    // Get cart and user details
-    const cart = await cartModel.findById(session.client_reference_id);
-    if (!cart) return next(new AppError('Cart not found', 404));
+      const cart = await cartModel.findById(session.client_reference_id);
+      if (!cart) return next(new AppError('Cart not found', 404));
 
-    const user = await userModel.findOne({ email: session.customer_email });
-    if (!user) return next(new AppError('User not found', 404));
+      const user = await userModel.findOne({ email: session.customer_email });
+      if (!user) return next(new AppError('User not found', 404));
 
-    // Create an order
-    const order = new orderModel({
-      user: user._id,
-      cartItems: cart.cartItems,
-      totalOrderPrice: session.amount_total / 100,
-      shippingAddress: session.metadata.shippingAddress,
-      paymentMethod: "card",
-      isPaid: true,
-      paidAt: Date.now(),
-    });
+      const order = new orderModel({
+        user: user._id,
+        cartItems: cart.cartItems,
+        totalOrderPrice: session.amount_total / 100,
+        shippingAddress: session.metadata.shippingAddress,
+        paymentMethod: "card",
+        isPaid: true,
+        paidAt: Date.now(),
+      });
 
-    await order.save();
+      await order.save();
 
-    // Adjust stock and sales
-    const options = cart.cartItems.map((item) => ({
-      updateOne: {
-        filter: { _id: item.product },
-        update: {
-          $inc: {
-            quantity: -item.quantity,
-            sold: item.quantity,
+      const options = cart.cartItems.map((item) => ({
+        updateOne: {
+          filter: { _id: item.product },
+          update: {
+            $inc: {
+              quantity: -item.quantity,
+              sold: item.quantity,
+            },
           },
         },
-      },
-    }));
-    await productModel.bulkWrite(options);
+      }));
+      await productModel.bulkWrite(options);
 
-    // Clear the user's cart
-    await cartModel.findByIdAndDelete(cart._id);
+      await cartModel.findByIdAndDelete(cart._id);
 
-    console.log("Order created successfully:", order);
-    return res.status(201).json({ message: "Order created successfully", order });
+      console.log("Order created successfully:", order);
+      return res.status(201).json({ message: "Order created successfully", order });
+    } catch (err) {
+      return next(err);
+    }
   }
 
-  // For other event types, log the event
   console.log(`Unhandled event type: ${event.type}`);
   res.status(200).send();
 });
