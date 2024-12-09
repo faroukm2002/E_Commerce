@@ -3,8 +3,10 @@ import { orderModel } from "../../../database/models/order.model.js";
 import { productModel } from "../../../database/models/product.model.js";
 import { catchError } from "../../utils/catchError.js";
 import Stripe from "stripe";
+import dotenv from "dotenv";
 import { userModel } from "../../../database/models/user.model.js";
 import { AppError } from "../../utils/AppError.js";
+dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -137,7 +139,7 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'];
+  const sig = req.headers['stripe-signature'].toString();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   let event;

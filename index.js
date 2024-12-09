@@ -4,6 +4,8 @@ import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
 import cors from 'cors'
 import { createOnlineOrder } from "./src/modules/order/order.controller.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const port = 3000;
