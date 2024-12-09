@@ -138,9 +138,8 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 // Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'];  // Get the signature from the header
+  const sig = req.headers['stripe-signature'].toString();  // Get the signature from the header
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
   let event;
 
   try {
