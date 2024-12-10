@@ -22,7 +22,8 @@ const signIn = catchError(async (req, res, next) => {
   let user = await userModel.findOne({ email });
   if (!user || !bcrypt.compareSync(password, user.password))
     return next(new AppError("Incorrect email or password", 409));
-// create accessToken and refreshToken
+
+  // Generate access and refresh tokens
   const tokens = generateTokens({
     name: user.name,
     email: user.email,
@@ -30,12 +31,12 @@ const signIn = catchError(async (req, res, next) => {
     role: user.role,
   });
 
-  // Save refresh token in the database
-  user.refreshToken = tokens.refreshToken;
-  await user.save();
+  // Save refresh token in the database 
+  await userModel.findByIdAndUpdate(user._id, { refreshToken: tokens.refreshToken });
 
   res.status(200).json({ message: "success", tokens });
 });
+
 
 
 

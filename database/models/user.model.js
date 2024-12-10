@@ -45,7 +45,10 @@ const userSchema=new Schema({
             Steet:String,
             phone:String,
         }],
-    
+        foegetCode:{
+            type:Number,
+            default:null,
+        },
         refreshToken: {
             type: String,
             default: null,
