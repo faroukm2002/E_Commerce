@@ -26,8 +26,7 @@ const allowedto = (roles) => {
         }
 
         // 2- verfy token
-        let decoded;
-            decoded = verifyToken(token);
+         let decoded = verifyToken(token,process.env.TOKEN_SIGNATURE);
             if (!decoded.id)  
             return next(new AppError("invalid token Payload", 401))
      

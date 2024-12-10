@@ -45,6 +45,11 @@ const userSchema=new Schema({
             Steet:String,
             phone:String,
         }],
+    
+        refreshToken: {
+            type: String,
+            default: null,
+          },
 },
 { timestamps: true } 
 )

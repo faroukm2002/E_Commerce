@@ -1,10 +1,10 @@
-import jwt from "jsonwebtoken"; 
+import jwt from "jsonwebtoken";
 
- 
-const generateToken = (data) => {
-   return jwt.sign(data, process.env.TOKEN_SIGNATURE, { expiresIn: '6d' });
+const generateTokens = (data) => {
+  const accessToken = jwt.sign(data, process.env.TOKEN_SIGNATURE, { expiresIn: '15m' });
+  const refreshToken = jwt.sign(data, process.env.REFRESH_TOKEN_SIGNATURE, { expiresIn: '7d' });
+  
+  return { accessToken, refreshToken };
 };
 
-
-
-export default generateToken
+export default generateTokens;

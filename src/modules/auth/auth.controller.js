@@ -2,7 +2,8 @@ import { userModel } from "../../../database/models/user.model.js";
 import { catchError } from "../../utils/catchError.js";
 import { AppError } from "../../utils/AppError.js";
 import bcrypt from "bcrypt";
-import generateToken from "../../utils/generateToken.js";
+import generateTokens from "../../utils/generateToken.js";
+import verifyToken from "../../utils/verifyToken.js";
 
 const signUp = catchError(async (req, res, next) => {
   let isUser = await userModel.findOne({ email: req.body.email });
@@ -14,19 +15,60 @@ const signUp = catchError(async (req, res, next) => {
   res.status(201).json({ message: "success", user });
 });
 
+
+
 const signIn = catchError(async (req, res, next) => {
   const { email, password } = req.body;
   let user = await userModel.findOne({ email });
   if (!user || !bcrypt.compareSync(password, user.password))
-    return next(new AppError("incorrect email or password", 409));
+    return next(new AppError("Incorrect email or password", 409));
+// create accessToken and refreshToken
+  const tokens = generateTokens({
+    name: user.name,
+    email: user.email,
+    id: user._id,
+    role: user.role,
+  });
 
-  let token = generateToken(
-    { name: user.name, email: user.email, id: user._id, role: user.role },
-  );
-  // Created
-  res.status(201).json({ message: "success", token });
+  // Save refresh token in the database
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
+
+  res.status(200).json({ message: "success", tokens });
 });
 
+
+
+
+
+
+const refreshToken = catchError(async (req, res, next) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) return next(new AppError("Refresh token is missing", 400));
+
+  // Verify refresh token
+  let decoded = verifyToken(refreshToken, process.env.REFRESH_TOKEN_SIGNATURE)
+    if (!decoded) return next(new AppError("Invalid refresh token", 401));
+  
+    
+ 
+    // Check if the refresh token matches the one in the database
+    const user = await userModel.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken)
+      return next(new AppError("Invalid or expired refresh token", 401));
+
+   // Generate new tokens (access and refresh tokens)
+  const tokens = generateTokens({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  });
+    res.status(200).json({ message: "success", tokens });
+  });
+
+  
 
 // 1- check we have token or not 
 // 2- verfy token
@@ -86,6 +128,7 @@ const signIn = catchError(async (req, res, next) => {
 export {
    signUp,
     signIn,
+        refreshToken
   //  protectRoutes,
   //  allowedto
    };
