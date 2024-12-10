@@ -1,14 +1,14 @@
 import express  from "express"
     import  * as wishlist  from "./wishlist.controller.js"
-import { allowedto, protectRoutes } from "../auth/auth.controller.js"
+import { allowedto } from "../../middleware/authorization.js"
 const wishlistRouter =express.Router()
 
 
 
 wishlistRouter.route('/').
-patch(protectRoutes ,allowedto('user'),wishlist.addToWishList).
-delete(protectRoutes ,allowedto('user'),wishlist.removeWishList).
-get(protectRoutes ,allowedto('user'),wishlist.getAllWishList)
+patch(allowedto('user'),wishlist.addToWishList).
+delete(allowedto('user'),wishlist.removeWishList).
+get(allowedto('user'),wishlist.getAllWishList)
 
 
 
