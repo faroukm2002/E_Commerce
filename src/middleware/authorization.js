@@ -37,7 +37,8 @@ const allowedto = (roles) => {
             return next(new AppError("User not found", 404));
         } 
   
-            // 4- check if this token is the last one or not (change password )
+            // 4- check if this token is the last one or not (change password ) 
+            // and forgetPasswrd 
              if (user.changePasswordAt) {
             const changePasswordTime = parseInt(user.changePasswordAt.getTime() / 1000);
             if (changePasswordTime > decoded.iat) {

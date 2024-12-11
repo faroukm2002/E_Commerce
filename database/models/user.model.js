@@ -45,8 +45,8 @@ const userSchema=new Schema({
             Steet:String,
             phone:String,
         }],
-        foegetCode:{
-            type:Number,
+        forgetCode:{
+            type:String,
             default:null,
         },
         refreshToken: {
@@ -61,8 +61,7 @@ userSchema.pre('save',function(){
     // console.log(this)
     this.password=bcrypt.hashSync(this.password,parseInt(process.env.SALT_ROUND))
 })
-
-// hash changepassword ************** 
+// hash changepassword and forgetPassword ************** 
 userSchema.pre('findOneAndUpdate',function(){
 // console.log(this)
     if(this._update.password)

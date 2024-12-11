@@ -2,13 +2,18 @@ import { userModel } from "../../../database/models/user.model.js";
 import { catchError } from "../../utils/catchError.js";
 import { AppError } from "../../utils/AppError.js";
 import bcrypt from "bcrypt";
+import { customAlphabet } from "nanoid";
 import generateTokens from "../../utils/generateToken.js";
 import verifyToken from "../../utils/verifyToken.js";
+import { sendEmail } from "../../../services/emails.js";
 
 const signUp = catchError(async (req, res, next) => {
-  let isUser = await userModel.findOne({ email: req.body.email });
+  let {email} = req.body
+
+  let isUser = await userModel.findOne({ email });
   if (isUser) return next(new AppError("Account already exists", 409));
   const user = new userModel(req.body);
+  
   await user.save();
 
   // Created
@@ -29,6 +34,7 @@ const signIn = catchError(async (req, res, next) => {
     email: user.email,
     id: user._id,
     role: user.role,
+
   });
 
   // Save refresh token in the database 
@@ -39,6 +45,62 @@ const signIn = catchError(async (req, res, next) => {
 
 
 
+// sendCode 
+
+const sendCode = catchError(async (req, res, next) => {
+  const { email } = req.body;
+
+  // Generate a 4-digit reset code
+  const generateCode = customAlphabet('1234567890', 4);
+  const resetCode = generateCode();
+
+  // Update user's reset code in the database
+  let user = await userModel.findOneAndUpdate(
+    { email },
+    { forgetCode: resetCode },
+  );
+
+  if (!user) return next(new AppError("Not a registered account", 409));
+
+  // Send the reset code via email
+  await sendEmail({ email, code: resetCode });
+
+  res.status(200).json({ message: "Reset code sent successfully!" });
+});
+
+ 
+
+
+const forgetPassword = catchError(async (req, res, next) => {
+  const { email, forgetCode, newPassword, confirmPassword } = req.body;
+
+  // Validate if new password and confirmation password match
+  if (newPassword !== confirmPassword) {
+    return next(new AppError("Passwords do not match", 400));
+  }
+  // Find the user by email
+  let user = await userModel.findOne({ email });
+  if (!user)
+    return next(new AppError("Not a registered account", 409));
+
+  // Validate the reset code
+  if (user.forgetCode !== forgetCode)
+    return next(new AppError("Invalid reset code", 409));
+  
+  // Reset the forgetCode and update the password
+  await userModel.findOneAndUpdate(
+    { email },
+    { password: newPassword,
+       forgetCode: null,
+       changePasswordAt :Date.now() },
+  );
+
+  res.status(201).json({ message: "Password reset successfully!" });
+});
+
+
+ 
+  
 
 
 
@@ -129,7 +191,9 @@ const refreshToken = catchError(async (req, res, next) => {
 export {
    signUp,
     signIn,
-        refreshToken
+    sendCode,
+        refreshToken,
+        forgetPassword
   //  protectRoutes,
   //  allowedto
    };
