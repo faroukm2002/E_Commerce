@@ -108,7 +108,7 @@ const createCheckOutSession = catchError(async (req, res, next) => {
             price_data:{
               currency: "egp",
               product_data: {
-                name:req.user.name,
+                name: `Order for ${req.user.name}`,
               },
               unit_amount: totalOrderPrice * 100,  
              
@@ -134,18 +134,19 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
 
 
-
+ 
 
 // Webhook route to handle Stripe events
 const createOnlineOrder = catchError(async (req, res, next) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-  const sig = req.headers['stripe-signature'].toString();  // Get the signature from the header
+  const sig = req.headers['stripe-signature'];  // Get the signature from the header
   let event;
-
+  console.log(sig,process.env.STRIPE_WEBHOOK_SECRET)
   try {
-    // Verify the webhook signature
+    // Verify the webhook signature (this will require the raw body)
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    console.log(process.env.STRIPE_WEBHOOK_SECRET)
+    console.log(sig)
+
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -200,6 +201,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
   console.log(`Unhandled event type: ${event.type}`);
   res.status(200).send();
 });
+
 
 
 

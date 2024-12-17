@@ -3,20 +3,19 @@ import { dbConnection } from "./database/dbConnection.js";
 import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
 import cors from 'cors'
-import { createOnlineOrder } from "./src/modules/order/order.controller.js";
 import dotenv from "dotenv";
+import { createOnlineOrder } from "./src/modules/order/order.controller.js";
 dotenv.config();
 
 const app = express();
 const port = 3000;
+app.use(express.json());  // For other routes
 
-// Middleware for JSON body parsing
-app.use(express.json());
+// Webhook route - Use express.raw() for Stripe webhook to avoid body parsing
+app.post('/webhook', express.raw({ type: 'application/json' }), createOnlineOrder);
 
-// Set up the Stripe webhook route
-app.post('/webhook',
-  express.raw({ type: 'application/json' }), 
-  createOnlineOrder);
+
+
 
 
 // CORS Middleware
