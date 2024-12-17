@@ -10,20 +10,13 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-// // Middleware for JSON body parsing
-// app.use(express.json());
+// Middleware for JSON body parsing
+app.use(express.json());
 
-// // Set up the Stripe webhook route
-// app.post('/webhook',
-//   express.raw({ type: 'application/json' }), 
-//   createOnlineOrder);
-
-app.use((req, res, next) => {
-  if(req.originalUrl === "/webhook"){
-    return next();
-  }
-  express.json()(req, res, next);
-})
+// Set up the Stripe webhook route
+app.post('/webhook',
+  express.raw({ type: 'application/json' }), 
+  createOnlineOrder);
 
 
 // CORS Middleware
