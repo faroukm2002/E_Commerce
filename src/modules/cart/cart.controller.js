@@ -85,14 +85,23 @@ const updateQuantity= catchError(async(req,res,next)=>{
   let product = await productModel.findById(req.params.id)
   if(!product)    return next(new AppError("product not found",404))
 
+
  let isCartExist =await cartModel.findOne({user:req.user._id})
+ if (!isCartExist) return next(new AppError("Cart not found", 404));
+
  let item =isCartExist.cartItems.find(elm=>elm.product == req.params.id)
- if (item) {
-  item.quantity = req.body.quantity;
-}
+ if (!item) return next(new AppError("Product not found in cart", 404));
+
+ if (req.body.quantity <= 0)
+   return next(new AppError("Quantity must be greater than 0", 400));
+ item.quantity = req.body.quantity;
+
 
 calcTotalPrice(isCartExist)
-if (isCartExist.discount) isCartExist.totalPriceAfterDiscount = isCartExist.totalPrice - (isCartExist.totalPrice * isCartExist.discount) / 100;
+  // Apply discount if available
+
+if (isCartExist.discount) 
+  isCartExist.totalPriceAfterDiscount = isCartExist.totalPrice - (isCartExist.totalPrice * isCartExist.discount) / 100;
 
 
  await isCartExist.save()
@@ -124,8 +133,9 @@ const applyCoupon = catchError(async (req, res, next) => {
     return next(new AppError('Cart not found', 404));
   
 
-  cart.totalPriceAfterDiscount = cart.totalPrice - (cart.totalPrice * coupon.discount) / 100;
   cart.discount = coupon.discount;
+  cart.totalPriceAfterDiscount = cart.totalPrice - (cart.totalPrice * coupon.discount) / 100;
+
 
   await cart.save();
   res.status(201).json({ message: 'Coupon applied successfully', cart });

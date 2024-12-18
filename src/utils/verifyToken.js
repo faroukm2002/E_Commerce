@@ -1,15 +1,14 @@
-import jwt from "jsonwebtoken"; // Correct import
+import jwt from "jsonwebtoken";
 import { AppError } from "./AppError.js";
 
-const verifyToken = (token,secretKey) => {
-    return jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-             new AppError('Invalid token', 401);
-        } else {
-            return decoded;
-        }
-    });
+const verifyToken = (token, secretKey) => {
+    let decoded;
+    try {
+        decoded = jwt.verify(token, secretKey); 
+    } catch (err) {
+        throw new AppError("Invalid or expired token", 401)
+    }
+    return decoded;
 };
-
 
 export default verifyToken;

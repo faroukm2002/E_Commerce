@@ -15,7 +15,7 @@ cartRouter.put("/:apllycoupon",allowedto('user'),cart.applyCoupon)
 cartRouter.route('/:id').
 
 delete( allowedto('user'),cart.removeProductFromCart)
-.put( allowedto('user'), cart.updateQuantity)
+.patch( allowedto('user'), cart.updateQuantity)
 
 // get(cart.getcartByID).
 

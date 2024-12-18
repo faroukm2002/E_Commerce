@@ -4,15 +4,14 @@ import { bootstrap } from "./src/bootstrap.js";
 import morgan from "morgan";
 import cors from 'cors'
 import dotenv from "dotenv";
-import { createOnlineOrder } from "./src/modules/order/order.controller.js";
 dotenv.config();
 
 const app = express();
 const port = 3000;
-app.use(express.json());  // For other routes
 
-// Webhook route - Use express.raw() for Stripe webhook to avoid body parsing
-app.post('/webhook', express.raw({ type: 'application/json' }), createOnlineOrder);
+// Middleware for JSON body parsing
+app.use(express.json());
+
 
 
 

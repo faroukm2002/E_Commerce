@@ -128,6 +128,8 @@ const refreshToken = catchError(async (req, res, next) => {
     email: user.email,
     role: user.role,
   });
+  await userModel.findByIdAndUpdate(user._id, { refreshToken: tokens.refreshToken });
+
     res.status(200).json({ message: "success", tokens });
   });
 

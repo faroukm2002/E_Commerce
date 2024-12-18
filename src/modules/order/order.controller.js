@@ -136,17 +136,15 @@ const createCheckOutSession = catchError(async (req, res, next) => {
 
  
 
-// Webhook route to handle Stripe events
-const createOnlineOrder = catchError(async (req, res, next) => {
-  const sig = req.headers['stripe-signature'];  // Get the signature from the header
-  let event;
-  console.log(sig,process.env.STRIPE_WEBHOOK_SECRET)
-  try {
-    // Verify the webhook signature (this will require the raw body)
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-    console.log(process.env.STRIPE_WEBHOOK_SECRET)
-    console.log(sig)
+// Whhebhook route to handle Stripe events
 
+const createOnlineOrder = catchError(async (req, res, next) => {
+  const sig = req.headers['stripe-signature'];  // Get the Stripe signature from the header
+  let event;
+
+  try {
+    // Pass the raw body directly (do not convert to string)
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);  // Using raw body (Buffer)
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -181,10 +179,7 @@ const createOnlineOrder = catchError(async (req, res, next) => {
       updateOne: {
         filter: { _id: item.product },
         update: {
-          $inc: {
-            quantity: -item.quantity,
-            sold: item.quantity,
-          },
+          $inc: { quantity: -item.quantity, sold: item.quantity },
         },
       },
     }));
@@ -227,7 +222,7 @@ export {
 
 
 
- 
+
 
 
 
