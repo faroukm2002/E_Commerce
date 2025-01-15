@@ -35,4 +35,6 @@ dbConnection();
 bootstrap(app);
 
 // Start the server
-app.listen(process.env.PORT || port, () => console.log(`Server listening on port ${port}!`));
+app.listen(process.env.PORT || port, () =>
+  console.log(`Server listening on port http://localhost:${port}`)
+);
