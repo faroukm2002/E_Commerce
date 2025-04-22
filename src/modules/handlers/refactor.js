@@ -12,7 +12,7 @@ export const deleteOne=(model,name)=>
     !document && next(new AppError(`${name} not found`,404))
     let response={}
     response[name]=document
-    document &&   res.status(201).json({message:"success",response})
+    document &&   res.status(201).json({message:"success",...response})
 
 
   })

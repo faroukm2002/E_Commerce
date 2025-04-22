@@ -27,13 +27,27 @@ const getAllCategory= catchError(async(req,res,next)=>{
   // const categories= await categoryModle.find()
   // // created
   // res.status(201).json({message:"success",categories})
-  
+    const limit = 4; // Default limit for pagination
+    const totalDocuments = await categoryModle.countDocuments(); // Step 1: Count total documents
+    
 
   let apifeatures= new Apifeatures( categoryModle.find(),req.query)
 .pagination().fields().filter().search().sort()
 
-  const results = await apifeatures.mongooseQuery
-  res.status(201).json({ message: 'success', page:apifeatures.page, results });
+  const results = await apifeatures.mongooseQuery;
+  const totalPages = Math.ceil(totalDocuments / limit); // Calculate total pages
+  const nextPage = apifeatures.page < totalPages ? apifeatures.page + 1 : null; // Determine next page
+
+  res
+    .status(201)
+    .json({
+      message: "success",
+      currentPage: apifeatures.page,
+      numberOfPages: totalPages,
+      limit,
+      nextPage,
+      results,
+    });
 
   }) 
 
@@ -41,7 +55,7 @@ const getAllCategory= catchError(async(req,res,next)=>{
 
   
   const getcategoryByID= catchError(async(req,res,next)=>{
-    const product= await productModel.findById(req.params.id)
+    const product = await categoryModle.findById(req.params.id);
     res.status(201).json({message:"success",product})
     
     })
@@ -49,17 +63,19 @@ const getAllCategory= catchError(async(req,res,next)=>{
 
 const updateCategory= catchError(async(req,res,next)=>{
   const{id}=req.params
-  const {name}=req.body
-  req.body.slug=slugify(req.body.name)
+   if (req.body.name) req.body.slug = slugify(req.body.name);
   const category= await categoryModle.findByIdAndUpdate(
     id,
     req.body,
     {new:true})
   // created
 
-  // !category && res.status(404).json({message:"category not found",}) 
-  !category && next(new AppError('category not found',404))
-
+  // !category && res.status(404).json({message:"category not found",})
+  // !null = true
+  // if true >> print 
+  !category && next(new AppError('category not found', 404))
+  // !{}==false 
+  // if false >> print 
   category &&   res.status(201).json({message:"success",category})
 
 

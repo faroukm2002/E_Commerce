@@ -50,12 +50,14 @@ search(){
     if (this.queryString.keyword)
 {
   this.mongooseQuery.find({
-    $or:[
-      {name:{$regex:this.queryString.keyword,$options:'i'}},
-      {email:{$regex:this.queryString.keyword,$options:'i'}}
+    $or: [
+      { name: { $regex: this.queryString.keyword, $options: "i" } },
+      { title: { $regex: this.queryString.keyword, $options: "i" } },
+      { description: { $regex: this.queryString.keyword, $options: "i" } },
 
-    ]
-  })
+      { email: { $regex: this.queryString.keyword, $options: "i" } },
+    ],
+  });
 
 
 }

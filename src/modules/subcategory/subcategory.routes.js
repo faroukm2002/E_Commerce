@@ -1,20 +1,23 @@
 import express  from "express"
     import  * as subcategory  from "./subcategory.controller.js"
+import { validate } from "../../middleware/validate.js"
+import { addSubCategoryValidation, deleteSubCategoryValidation, getAllSubCategoriesValidation, getSubCategoryValidation, updateSubCategoryValidation } from "./subcategory.validation.js"
 const subCategoryRouter =express.Router({mergeParams:true})
 
 
 
 
-subCategoryRouter.route('/').
-post(subcategory.addsubCategory).
-get(subcategory.getAllsubCategory)
+subCategoryRouter
+  .route("/")
+  .post(validate(addSubCategoryValidation), subcategory.addsubCategory)
+  .get(validate(getAllSubCategoriesValidation), subcategory.getAllsubCategory);
 
 
-subCategoryRouter.route('/:id').
-get(subcategory.getsubcategoryByID).
-
-put(subcategory.updatesubCategory).
-delete(subcategory.deletesubCategory)
+subCategoryRouter
+  .route("/:id")
+  .get(validate(getSubCategoryValidation), subcategory.getsubcategoryByID)
+  .put(validate(updateSubCategoryValidation), subcategory.updatesubCategory)
+  .delete(validate(deleteSubCategoryValidation), subcategory.deletesubCategory);
 
 export default subCategoryRouter
 
