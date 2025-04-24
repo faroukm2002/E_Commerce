@@ -12,7 +12,7 @@ import { Apifeatures } from "../../utils/Apifeatures.js";
 const addCategory= catchError(async(req,res,next)=>{
   req.body.slug=slugify(req.body.name)
   req.body.image=req.file.filename
-  console.log(req.file)
+  // console.log(req.file)
 const existCategory=await categoryModle.findOne({name:req.body.name})
 if (existCategory) return next(new AppError("Category name already exists", 400));
 

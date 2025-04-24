@@ -1,21 +1,25 @@
-import express  from "express"
-    import  * as coupon  from "./coupon.controller.js"
-import { allowedto } from "../../middleware/authorization.js"
-const couponRouter =express.Router()
+import express from "express";
+import * as coupon from "./coupon.controller.js";
+import { allowedto, roles } from "../../middleware/authorization.js"; // 👈 تأكد من استيراد الميدل وير الخاص بالصلاحيات
+const couponRouter = express.Router();
 
+couponRouter
+  .route("/")
+  .post(
+    allowedto([roles.Admin]), 
+    coupon.addCoupon
+  )
+  .get(coupon.getAllCoupon); 
+couponRouter
+  .route("/:id")
+  .get(coupon.getCouponByID) 
+  .put(
+    allowedto([roles.Admin]), 
+    coupon.updateCoupon
+  )
+  .delete(
+    allowedto([roles.Admin]), 
+    coupon.deleteCoupon
+  );
 
-
-couponRouter.route('/').
-post(allowedto('user'),coupon.addCoupon).
-get(coupon.getAllCoupon)
-
-
-couponRouter.route('/:id').
-get(coupon.getCouponByID).
-
-put(allowedto('user'),coupon.updateCoupon).
-delete( allowedto('admin','user'),coupon.deleteCoupon)
-
-export default couponRouter
-
-
+export default couponRouter;

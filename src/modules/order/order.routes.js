@@ -1,22 +1,36 @@
 import express from "express";
 import * as order from "./order.controller.js";
-import { allowedto } from "../../middleware/authorization.js"; // Import any middleware as needed
+import { allowedto, roles } from "../../middleware/authorization.js"; // Import the auth middleware
 
 const orderRouter = express.Router();
 
 // Webhook route to handle Stripe events
-orderRouter.post('/webhook', express.raw({ type: 'application/json' }), order.createOnlineOrder); // Raw body parsing for Stripe webhook
+orderRouter.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  order.createOnlineOrder // No auth needed here because it's for Stripe events
+);
 
 // Checkout and Order routes
-orderRouter.post('/checkout/:id', allowedto('user'), order.createCheckOutSession);
+orderRouter.post(
+  "/checkout/:id",
+  allowedto([roles.Admin]), 
+  order.createCheckOutSession
+);
 
-// User order route
-orderRouter.route('/').get(allowedto('user'), order.getSpecificOrder);
+// Get specific order
+orderRouter.route("/").get(
+  allowedto([roles.Admin,roles.User]), 
+  order.getSpecificOrder
+);
 
-// Admin route for all orders
-orderRouter.get('/all', order.getAllOrders);
+// Get all orders - only admin
+orderRouter.get("/all", allowedto([roles.Admin]), order.getAllOrders);
 
-// Cash order route
-orderRouter.route('/:id').post(allowedto('user'), order.createCashOrder);
+// Cash order route - can be accessed by users
+orderRouter.route("/:id").post(
+  allowedto([roles.Admin]), 
+  order.createCashOrder
+);
 
 export default orderRouter;

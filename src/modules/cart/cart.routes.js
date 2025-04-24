@@ -1,21 +1,21 @@
 import express  from "express"
     import  * as cart  from "./cart.controller.js"
-import { allowedto } from "../../middleware/authorization.js"
+import { allowedto, roles } from "../../middleware/authorization.js"
 const cartRouter =express.Router()
 
 
 
 cartRouter.route('/').
-post(allowedto('user'),cart.addProductToCart).
-get(allowedto('user'),cart.getLoggedUserCart)
+post(allowedto([roles.User]),cart.addProductToCart).
+get(allowedto([roles.User]),cart.getLoggedUserCart)
 
-cartRouter.put("/:apllycoupon",allowedto('user'),cart.applyCoupon)
+cartRouter.put("/:apllycoupon",allowedto([roles.User]),cart.applyCoupon)
 
 
 cartRouter.route('/:id').
 
-delete( allowedto('user'),cart.removeProductFromCart)
-.patch( allowedto('user'), cart.updateQuantity)
+delete( allowedto([roles.User]),cart.removeProductFromCart)
+.patch( allowedto([roles.User]), cart.updateQuantity)
 
 // get(cart.getcartByID).
 

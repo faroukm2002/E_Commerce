@@ -1,18 +1,14 @@
 import express  from "express"
     import  * as wishlist  from "./wishlist.controller.js"
-import { allowedto } from "../../middleware/authorization.js"
+import { allowedto, roles } from "../../middleware/authorization.js"
 const wishlistRouter =express.Router()
 
 
 
 wishlistRouter.route('/').
-patch(allowedto('user'),wishlist.addToWishList).
-delete(allowedto('user'),wishlist.removeWishList).
-get(allowedto('user'),wishlist.getAllWishList)
-
-
-
-
+patch(allowedto([roles.Admin]),wishlist.addToWishList).
+delete(allowedto([roles.Admin]),wishlist.removeWishList).
+get(allowedto([roles.Admin]),wishlist.getAllWishList)
 
 export default wishlistRouter
 

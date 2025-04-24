@@ -89,11 +89,11 @@ min:0,
 
 productSchema.post("init", (doc) => {
     if (doc.imgCover && doc.images) {
-      console.log('imgCover URL:', process.env.BASEURL + "product/" + encodeURIComponent(doc.imgCover));
-      console.log('images URL:', doc.images.map((path) => process.env.BASEURL + "product/" + encodeURIComponent(path)));
+    //   console.log('imgCover URL:', process.env.BASEURL + "product/" + encodeURIComponent(doc.imgCover));
+    //   console.log('images URL:', doc.images.map((path) => process.env.BASEURL + "product/" + encodeURIComponent(path)));
       
-      doc.imgCover = process.env.BASEURL + "product/" + encodeURIComponent(doc.imgCover);
-      doc.images = doc.images.map((path) => process.env.BASEURL + "product/" + encodeURIComponent(path));
+      doc.imgCover = process.env.BASEURL + "/product/" + encodeURIComponent(doc.imgCover);
+      doc.images = doc.images.map((path) => process.env.BASEURL + "/product/" + encodeURIComponent(path));
     }
   });
   

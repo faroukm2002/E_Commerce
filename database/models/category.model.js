@@ -21,9 +21,12 @@ const categorySchema=new Schema({
     { timestamps: true } 
 )
 
-categorySchema.post('init', function(doc) {
-    const encodedImage = encodeURIComponent(doc.image);
-    doc.image = `${process.env.BASEURL}/category/${encodedImage}`;
+categorySchema.post('init', function (doc) {
+    if (doc.image) {
+
+        const encodedImage = encodeURIComponent(doc.image);
+        doc.image = `${process.env.BASEURL}/category/${encodedImage}`;
+    }
 });
 export const categoryModle=model('category',categorySchema)
 
