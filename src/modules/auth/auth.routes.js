@@ -7,6 +7,8 @@ const authRouter =express.Router()
 authRouter.post('/signUp',auth.signUp)
 authRouter.post('/signIn',auth.signIn)
 authRouter.post("/refresh-token", auth.refreshToken);
+authRouter.post("/logout", auth.logout);
+
 authRouter.patch("/forgetPassword", auth.forgetPassword);
 authRouter.patch('/sendCode',auth.sendCode)
 

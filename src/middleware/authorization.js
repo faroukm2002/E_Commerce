@@ -38,10 +38,18 @@ const allowedto = (roles = []) => {
     // 5. Check if user exists
     const user = await userModel.findById(decoded.id);
     if (!user) {
-      return next(new AppError("User not found", 404));
+      return next(new AppError("User not found or deleted", 404));
+    }
+    // 6. Check if user is blocked or inactive
+    if (user.blocked) {
+      return next(new AppError("Your account has been blocked", 403));
     }
 
-    // 6. Check if token was issued before password change
+    if (!user.isActive) {
+      return next(new AppError("Please activate your account first", 403));
+    }
+
+    // 7. Check if token was issued before password change
     if (user.changePasswordAt) {
       const passwordChangedAt = Math.floor(
         user.changePasswordAt.getTime() / 1000
@@ -51,14 +59,14 @@ const allowedto = (roles = []) => {
       }
     }
 
-    // 7. Check authorization
+    // 8. Check authorization
     if (!roles.includes(user.role)) {
       return next(
         new AppError("You are not authorized to access this route", 403)
       );
     }
 
-    // 8. Attach user to request
+    // 9. Attach user to request
     req.user = user;
     next();
   });
